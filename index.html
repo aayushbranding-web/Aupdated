@@ -4,84 +4,150 @@
   <title>Billing System</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f0f4f7, #d9e2ec);
+      color: #333;
+      padding: 30px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2c3e50;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     .field {
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
     }
     input, select, button {
-      padding: 5px;
-      margin-top: 5px;
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #2980b9;
     }
     #eveningSummaryBtn {
-      display: none;
+      background-color: #27ae60;
+      margin-top: 20px;
+    }
+    #eveningSummaryBtn:hover {
+      background-color: #1e8449;
+    }
+    span {
+      font-weight: 600;
     }
   </style>
 </head><body>
-  <h2>Billing System</h2>  <div class="field">
-    <label>Item:</label><br />
-    <select id="item">
-      <option value="">Select</option>
-      <option>Chuda Rakhi</option>
-      <option>Baccha Rakhi</option>
-      <option>Rakhi</option>
-      <option>Moli</option>
-      <option>Mehandi</option>
-      <option>Joda Rakhi</option>
-      <option>Puja Rakhi</option>
-    </select>
-  </div>  <div class="field">
-    <label>Quantity:</label><br />
-    <input type="number" id="quantity" />
-  </div>  <div class="field">
-    <label>Rate:</label><br />
-    <input type="number" id="rate" />
-  </div>  <div class="field">
-    <label>Discount:</label><br />
-    <input type="number" id="discount" placeholder="Enter discount" />
-    <select id="discountType">
-      <option value="₹">₹</option>
-      <option value="%">%</option>
-    </select>
-  </div>  <div class="field">
-    <label>Paid:</label><br />
-    <input type="number" id="paid" />
-  </div>  <div class="field">
-    <label>Payment Mode:</label><br />
-    <select id="paymentMode" onchange="togglePaymentNumber()">
-      <option value="">Select</option>
-      <option value="Cash">Cash</option>
-      <option value="Online">Online</option>
-    </select>
-  </div>  <div class="field" id="paymentNumberField" style="display: none;">
-    <label>Payment Done On:</label><br />
-    <select id="paymentNumber">
-      <option value="">Select</option>
-      <option value="7742065298">7742065298</option>
-      <option value="6350455314">6350455314</option>
-    </select>
-  </div>  <div class="field">
-    <label>Estimate No:</label>
-    <span id="estimateNo"></span>
-  </div>  <div class="field">
-    <label>Total Before Discount:</label>
-    <span id="totalBeforeDiscount">0</span>
-  </div>  <div class="field">
-    <label>Total After Discount:</label>
-    <span id="total">0</span>
-  </div>  <div class="field">
-    <label>Balance:</label>
-    <span id="balance">0</span>
-  </div><button onclick="generateBill()">Generate WhatsApp Message</button> <button onclick="resetBill()">🔄 Reset</button> <button id="eveningSummaryBtn" onclick="window.open('evening-summary.html', '_blank')">📊 Evening Summary</button>
+  <div class="container">
+    <h2>Billing System</h2><div class="field">
+  <label>Item:</label>
+  <select id="item">
+    <option value="">Select</option>
+    <option>Chuda Rakhi</option>
+    <option>Baccha Rakhi</option>
+    <option>Rakhi</option>
+    <option>Moli</option>
+    <option>Mehandi</option>
+    <option>Joda Rakhi</option>
+    <option>Puja Rakhi</option>
+  </select>
+</div>
 
-  <script>
+<div class="field">
+  <label>Quantity:</label>
+  <input type="number" id="quantity" />
+</div>
+
+<div class="field">
+  <label>Rate:</label>
+  <input type="number" id="rate" />
+</div>
+
+<div class="field">
+  <label>Discount:</label>
+  <input type="number" id="discount" placeholder="Enter discount" />
+  <select id="discountType">
+    <option value="₹">₹</option>
+    <option value="%">%</option>
+  </select>
+</div>
+
+<div class="field">
+  <label>Paid:</label>
+  <input type="number" id="paid" />
+</div>
+
+<div class="field">
+  <label>Payment Mode:</label>
+  <select id="paymentMode" onchange="togglePaymentNumber()">
+    <option value="">Select</option>
+    <option value="Cash">Cash</option>
+    <option value="Online">Online</option>
+  </select>
+</div>
+
+<div class="field" id="paymentNumberField" style="display: none;">
+  <label>Payment Done On:</label>
+  <select id="paymentNumber">
+    <option value="">Select</option>
+    <option value="7742065298">7742065298</option>
+    <option value="6350455314">6350455314</option>
+  </select>
+</div>
+
+<div class="field">
+  <label>Estimate No:</label>
+  <span id="estimateNo"></span>
+</div>
+
+<div class="field">
+  <label>Total Before Discount:</label>
+  <span id="totalBeforeDiscount">0</span>
+</div>
+
+<div class="field">
+  <label>Total After Discount:</label>
+  <span id="total">0</span>
+</div>
+
+<div class="field">
+  <label>Balance:</label>
+  <span id="balance">0</span>
+</div>
+
+<button onclick="generateBill()">Generate WhatsApp Message</button>
+<button onclick="resetBill()">🔄 Reset</button>
+<button id="eveningSummaryBtn" onclick="window.open('evening-summary.html', '_blank')">📊 Evening Summary</button>
+
+  </div>  <script>
     function togglePaymentNumber() {
       const mode = document.getElementById('paymentMode').value;
       document.getElementById('paymentNumberField').style.display = mode === 'Online' ? 'block' : 'none';
     }
 
-    let estimateNumber = parseInt(localStorage.getItem('estimateNumber')) || 1;
+    let estimateNumber = localStorage.getItem('estimateNumber') || 1;
     document.getElementById('estimateNo').textContent = estimateNumber;
 
     function generateBill() {
@@ -107,11 +173,6 @@
       document.getElementById('total').textContent = total;
       document.getElementById('balance').textContent = balance;
 
-      // Save total in localStorage for evening summary
-      let currentTotal = parseFloat(localStorage.getItem('dailyTotal')) || 0;
-      currentTotal += total;
-      localStorage.setItem('dailyTotal', currentTotal);
-
       const estimate = estimateNumber;
       const lines = [
         `📌 *Estimate No:* ${estimate}`,
@@ -130,6 +191,11 @@
       estimateNumber++;
       localStorage.setItem('estimateNumber', estimateNumber);
       document.getElementById('estimateNo').textContent = estimateNumber;
+
+      // Store daily sale total
+      let todayTotal = parseFloat(localStorage.getItem('todayTotal') || '0');
+      todayTotal += total;
+      localStorage.setItem('todayTotal', todayTotal);
     }
 
     function resetBill() {
