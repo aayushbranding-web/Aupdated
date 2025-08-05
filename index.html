@@ -119,8 +119,8 @@
   Payment Done To:
   <select id="paymentNumber">
     <option value="">Select Number</option>
-    <option value="77420​65298">7742065298</option>
-    <option value="63504​55314">6350455314</option>
+    <option value="7742065298">7742065298</option>
+    <option value="6350455314">6350455314</option>
   </select>
 </div>
 
@@ -142,22 +142,17 @@
     }
 
     function resetBilling() {
-      if (confirm("Reset all fields for a new bill?")) {
-        document.getElementById('itemsContainer').innerHTML = '';
-        document.getElementById('billDiscount').value = '';
-        document.getElementById('discountType').value = '₹';
-        document.getElementById('paidAmount').value = '';
-        document.getElementById('paymentMethod').value = '';
-        document.getElementById('paymentNumber').value = '';
-        document.getElementById('paymentNumberContainer').style.display = 'none';
-        document.getElementById('totalBeforeDiscount').textContent = 'Total Before Discount: Rs. 0.00';
-        document.getElementById('grandTotal').textContent = 'Grand Total: Rs. 0.00';
-        document.getElementById('balanceAmount').textContent = 'Balance: Rs. 0.00';
-        addItem();
-        currentEstimateNumber = getNextEstimateNumber();
-        updateEstimateDisplay();
-        alert("Billing reset successfully!");
-      }
+      document.getElementById('itemsContainer').innerHTML = '';
+      document.getElementById('billDiscount').value = '';
+      document.getElementById('discountType').value = '₹';
+      document.getElementById('paidAmount').value = '';
+      document.getElementById('paymentMethod').value = '';
+      document.getElementById('paymentNumber').value = '';
+      document.getElementById('paymentNumberContainer').style.display = 'none';
+      document.getElementById('totalBeforeDiscount').textContent = 'Total Before Discount: Rs. 0.00';
+      document.getElementById('grandTotal').textContent = 'Grand Total: Rs. 0.00';
+      document.getElementById('balanceAmount').textContent = 'Balance: Rs. 0.00';
+      addItem();
     }
 
     function addItem() {
@@ -221,11 +216,47 @@
       document.getElementById('paymentNumberContainer').style.display = (method === "Online") ? "block" : "none";
     }
 
+    function shareOnWhatsApp() {
+      const items = [];
+      document.querySelectorAll('.item').forEach(item => {
+        const name = item.querySelector('.itemName').value;
+        const rate = item.querySelector('.amount').value;
+        const qty = item.querySelector('.quantity').value;
+        if (name && rate && qty) {
+          const total = (parseFloat(rate) * parseFloat(qty)).toFixed(2);
+          items.push(`${name} - ₹${rate} x ${qty} = ₹${total}`);
+        }
+      });
+
+      const discount = document.getElementById('billDiscount').value || 0;
+      const discountType = document.getElementById('discountType').value;
+      const paid = document.getElementById('paidAmount').value || 0;
+      const paymentMethod = document.getElementById('paymentMethod').value;
+      const paymentNumber = document.getElementById('paymentNumber').value;
+      const grandTotalText = document.getElementById('grandTotal').textContent;
+      const balanceText = document.getElementById('balanceAmount').textContent;
+      const estimateNo = document.getElementById('estimateNum').textContent;
+
+      let message = `*${estimateNo}*\n\n`;
+      message += items.join('\n');
+      message += `\n\n*Discount:* ${discount}${discountType}`;
+      message += `\n${grandTotalText}`;
+      message += `\n*Paid:* ₹${paid}`;
+      message += `\n${balanceText}`;
+      message += `\n*Payment Mode:* ${paymentMethod}`;
+      if (paymentMethod === "Online" && paymentNumber)
+        message += `\nTo: ${paymentNumber}`;
+
+      const encoded = encodeURIComponent(message);
+      const whatsappURL = `https://wa.me/?text=${encoded}`;
+      window.open(whatsappURL, "_blank");
+    }
+
     function showEveningSummaryBtnIfEligible() {
       const now = new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes();
-      const show = (hours === 21 && minutes >= 30) || (hours > 21 || hours < 8);
+      const show = (hours > 21 || (hours === 21 && minutes >= 30)) || (hours >= 0 && hours < 8);
       document.getElementById('eveningSummaryBtn').style.display = show ? 'block' : 'none';
     }
 
@@ -239,4 +270,4 @@
       showEveningSummaryBtnIfEligible();
     };
   </script></body>
-                                                                                             </html>
+  </html>
