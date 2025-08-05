@@ -1,217 +1,242 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html><html lang="en">
+<head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Billing System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aayushi Fashions - Billing</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #f8f9fa, #e9ecef);
-      padding: 40px;
-      color: #343a40;
+      background: linear-gradient(to right, #fceabb, #f8b500);
+      margin: 0;
+      padding: 20px;
     }
-    h2 {
-      color: #212529;
-      margin-bottom: 20px;
+    h1 {
+      text-align: center;
+      color: #6a1b9a;
     }
-    .field {
-      margin-bottom: 15px;
-      transition: all 0.3s ease;
+    #billContent {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 850px;
+      margin: 20px auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    input, select, button {
-      padding: 10px;
-      margin-top: 5px;
+    .item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    input, select {
+      padding: 8px;
       border-radius: 8px;
-      border: 1px solid #ced4da;
-      width: 100%;
-      box-sizing: border-box;
-      font-size: 16px;
+      border: 1px solid #ccc;
     }
-    button {
-      background-color: #007bff;
-      color: white;
+    .btns {
+      display: flex;
+      gap: 5px;
+    }
+    .btns button {
+      background: transparent;
+      border: none;
+      font-size: 20px;
       cursor: pointer;
-      margin-top: 10px;
     }
-    button:hover {
-      background-color: #0056b3;
+    .share-btn {
+      display: block;
+      margin: 30px auto 0;
+      background: #25D366;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .reset-btn {
+      display: block;
+      margin: 10px auto;
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 14px;
+      color: #333;
+    }
+    #paymentNumberContainer {
+      display: none;
+      margin-top: 10px;
     }
     #eveningSummaryBtn {
       display: none;
-      background-color: #28a745;
-    }
-    .summary {
-      margin-top: 30px;
-      padding: 20px;
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      margin: 30px auto 0;
+      background: #6a1b9a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
-</head><body>
-  <h2>Billing System</h2>  <div class="field">
-    <label>Item:</label><br />
-    <select id="item">
-      <option value="">Select</option>
-      <option>Chuda Rakhi</option>
-      <option>Baccha Rakhi</option>
-      <option>Rakhi</option>
-      <option>Moli</option>
-      <option>Mehandi</option>
-      <option>Joda Rakhi</option>
-      <option>Puja Rakhi</option>
-    </select>
-  </div>  <div class="field">
-    <label>Quantity:</label><br />
-    <input type="number" id="quantity" />
-  </div>  <div class="field">
-    <label>Rate:</label><br />
-    <input type="number" id="rate" />
-  </div>  <div class="field">
-    <label>Discount:</label><br />
-    <input type="number" id="discount" placeholder="Enter discount" />
-    <select id="discountType">
-      <option value="₹">₹</option>
-      <option value="%">%</option>
-    </select>
-  </div>  <div class="field">
-    <label>Paid:</label><br />
-    <input type="number" id="paid" />
-  </div>  <div class="field">
-    <label>Payment Mode:</label><br />
-    <select id="paymentMode" onchange="togglePaymentNumber()">
-      <option value="">Select</option>
-      <option value="Cash">Cash</option>
-      <option value="Online">Online</option>
-    </select>
-  </div>  <div class="field" id="paymentNumberField" style="display: none;">
-    <label>Payment Done On:</label><br />
-    <select id="paymentNumber">
-      <option value="">Select</option>
-      <option value="7742065298">7742065298</option>
-      <option value="6350455314">6350455314</option>
-    </select>
-  </div>  <div class="field">
-    <label>Estimate No:</label>
-    <span id="estimateNo"></span>
-  </div>  <div class="field">
-    <label>Total Before Discount:</label>
-    <span id="totalBeforeDiscount">0</span>
-  </div>  <div class="field">
-    <label>Total After Discount:</label>
-    <span id="total">0</span>
-  </div>  <div class="field">
-    <label>Balance:</label>
-    <span id="balance">0</span>
-  </div><button onclick="generateBill()">Generate WhatsApp Message</button> <button onclick="resetBill()">🔄 Reset</button> <button id="eveningSummaryBtn" onclick="generateEveningSummary()">📊 Evening Summary</button>
+</head>
+<body>
+  <h1>Aayushi Fashions - Billing</h1>
+  <div id="billContent">
+    <div id="estimateNum"></div>
+    <button class="reset-btn" onclick="resetBilling()">🔄 Reset Billing</button>
+    <div id="itemsContainer"></div><p>
+  Discount:
+  <input type="number" id="billDiscount" placeholder="Discount" oninput="calculateTotals()">
+  <select id="discountType" onchange="calculateTotals()">
+    <option value="₹">₹</option>
+    <option value="%">%</option>
+  </select>
+</p>
+<p id="totalBeforeDiscount">Total Before Discount: Rs. 0.00</p>
+<p id="grandTotal">Grand Total: Rs. 0.00</p>
+<p>
+  Paid Amount: <input type="number" id="paidAmount" placeholder="Paid Amount" oninput="calculateTotals()">
+</p>
+<p id="balanceAmount">Balance: Rs. 0.00</p>
+<p>
+  Payment Method:
+  <select id="paymentMethod" onchange="togglePaymentNumber()">
+    <option value="">Select</option>
+    <option value="Cash">Cash</option>
+    <option value="Online">Online</option>
+  </select>
+</p>
+<div id="paymentNumberContainer">
+  Payment Done To:
+  <select id="paymentNumber">
+    <option value="">Select Number</option>
+    <option value="77420​65298">7742065298</option>
+    <option value="63504​55314">6350455314</option>
+  </select>
+</div>
 
-  <div class="summary" id="eveningSummaryContainer" style="display:none">
-    <label>Today's Sale:</label>
-    <span id="todaySale">0</span><br /><br />
-    <label>Previous Sale:</label>
-    <input type="number" id="previousSale" /><br /><br />
-    <label>Total Sale:</label>
-    <span id="combinedSale">0</span><br /><br />
-    <button onclick="sendEveningSummary()">Send Summary to WhatsApp</button>
-  </div>  <script>
-    function togglePaymentNumber() {
-      const mode = document.getElementById('paymentMode').value;
-      document.getElementById('paymentNumberField').style.display = mode === 'Online' ? 'block' : 'none';
+  </div><button class="share-btn" onclick="shareOnWhatsApp()">📤 Share on WhatsApp</button> <button id="eveningSummaryBtn" onclick="openEveningSummary()">🌙 Evening Summary</button>
+
+  <div class="footer">© 2025 Aayushi Fashions. All rights reserved.</div>  <script>
+    function getNextEstimateNumber() {
+      let lastNum = localStorage.getItem("lastEstimateNumber");
+      if (!lastNum) lastNum = 0;
+      let nextNum = parseInt(lastNum) + 1;
+      localStorage.setItem("lastEstimateNumber", nextNum);
+      return `EST-${String(nextNum).padStart(3, '0')}`;
     }
 
-    let estimateNumber = localStorage.getItem('estimateNumber') || 1;
-    document.getElementById('estimateNo').textContent = estimateNumber;
+    let currentEstimateNumber = getNextEstimateNumber();
 
-    let todayTotalSale = 0;
+    function updateEstimateDisplay() {
+      document.getElementById("estimateNum").textContent = `Estimate No: ${currentEstimateNumber}`;
+    }
 
-    function generateBill() {
-      const item = document.getElementById('item').value;
-      const quantity = +document.getElementById('quantity').value;
-      const rate = +document.getElementById('rate').value;
-      const discount = +document.getElementById('discount').value;
+    function resetBilling() {
+      if (confirm("Reset all fields for a new bill?")) {
+        document.getElementById('itemsContainer').innerHTML = '';
+        document.getElementById('billDiscount').value = '';
+        document.getElementById('discountType').value = '₹';
+        document.getElementById('paidAmount').value = '';
+        document.getElementById('paymentMethod').value = '';
+        document.getElementById('paymentNumber').value = '';
+        document.getElementById('paymentNumberContainer').style.display = 'none';
+        document.getElementById('totalBeforeDiscount').textContent = 'Total Before Discount: Rs. 0.00';
+        document.getElementById('grandTotal').textContent = 'Grand Total: Rs. 0.00';
+        document.getElementById('balanceAmount').textContent = 'Balance: Rs. 0.00';
+        addItem();
+        currentEstimateNumber = getNextEstimateNumber();
+        updateEstimateDisplay();
+        alert("Billing reset successfully!");
+      }
+    }
+
+    function addItem() {
+      const container = document.getElementById('itemsContainer');
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+        <select class="itemName" onchange="calculateTotals()">
+          <option value="">Select Item</option>
+          <option value="Chuda Rakhi">Chuda Rakhi</option>
+          <option value="Baccha Rakhi">Baccha Rakhi</option>
+          <option value="Rakhi">Rakhi</option>
+          <option value="Joda Rakhi">Joda Rakhi</option>
+          <option value="Moli">Moli</option>
+          <option value="Mehandi">Mehandi</option>
+          <option value="Puja Rakhi">Puja Rakhi</option>
+        </select>
+        <input type="number" class="amount" placeholder="Rate" oninput="calculateTotals()">
+        <input type="number" class="quantity" placeholder="Qty" oninput="calculateTotals()">
+        <div class="btns">
+          <button onclick="addItem()">➕</button>
+          <button onclick="removeItem(this)">❌</button>
+        </div>
+      `;
+      container.appendChild(div);
+    }
+
+    function removeItem(btn) {
+      btn.closest('.item').remove();
+      calculateTotals();
+    }
+
+    function calculateTotals() {
+      let totalBeforeDiscount = 0;
+      document.querySelectorAll('.item').forEach(item => {
+        const amt = parseFloat(item.querySelector('.amount').value) || 0;
+        const qty = parseFloat(item.querySelector('.quantity').value) || 0;
+        totalBeforeDiscount += amt * qty;
+      });
+
+      document.getElementById('totalBeforeDiscount').textContent = `Total Before Discount: Rs. ${totalBeforeDiscount.toFixed(2)}`;
+
+      let grandTotal = totalBeforeDiscount;
+      const discount = parseFloat(document.getElementById('billDiscount').value) || 0;
       const discountType = document.getElementById('discountType').value;
-      const paid = +document.getElementById('paid').value;
-      const paymentMode = document.getElementById('paymentMode').value;
-      const paymentNumber = document.getElementById('paymentNumber').value;
-
-      const totalBeforeDiscount = quantity * rate;
-      let total = totalBeforeDiscount;
-      if (discountType === '₹') {
-        total -= discount;
-      } else {
-        total -= (total * discount / 100);
+      if (discountType === "₹") {
+        grandTotal -= discount;
+      } else if (discountType === "%") {
+        grandTotal -= (grandTotal * discount / 100);
       }
 
-      const balance = total - paid;
-      document.getElementById('totalBeforeDiscount').textContent = totalBeforeDiscount;
-      document.getElementById('total').textContent = total;
-      document.getElementById('balance').textContent = balance;
+      const paid = parseFloat(document.getElementById('paidAmount').value) || 0;
+      const balance = grandTotal - paid;
 
-      todayTotalSale += total;
-      localStorage.setItem('todayTotalSale', todayTotalSale);
-
-      const estimate = estimateNumber;
-      const lines = [
-        `📌 *Estimate No:* ${estimate}`,
-        `| *Item*        | *Qty* | *Rate* | *Total* |`,
-        `|---------------|-------|--------|---------|`,
-        `| ${item}        | ${quantity}    | ₹${rate}   | ₹${totalBeforeDiscount} |`,
-        `💸 *Discount:* ${discount}${discountType}`,
-        `💰 *Paid:* ₹${paid}`,
-        paymentMode === 'Online' ? `💳 *Mode:* ${paymentMode} (${paymentNumber})` : `💳 *Mode:* ${paymentMode}`
-      ];
-
-      const message = encodeURIComponent(lines.join('\n'));
-      const link = `https://wa.me/?text=${message}`;
-      window.open(link, '_blank');
-
-      estimateNumber++;
-      localStorage.setItem('estimateNumber', estimateNumber);
-      document.getElementById('estimateNo').textContent = estimateNumber;
+      document.getElementById('grandTotal').textContent = `Grand Total: Rs. ${grandTotal.toFixed(2)}`;
+      document.getElementById('balanceAmount').textContent = `Balance: Rs. ${balance.toFixed(2)}`;
     }
 
-    function resetBill() {
-      document.getElementById('item').value = "";
-      document.getElementById('quantity').value = "";
-      document.getElementById('rate').value = "";
-      document.getElementById('discount').value = "";
-      document.getElementById('discountType').value = "₹";
-      document.getElementById('paid').value = "";
-      document.getElementById('paymentMode').value = "";
-      document.getElementById('paymentNumber').value = "";
-      document.getElementById('paymentNumberField').style.display = 'none';
-      document.getElementById('total').textContent = 0;
-      document.getElementById('balance').textContent = 0;
-      document.getElementById('totalBeforeDiscount').textContent = 0;
+    function togglePaymentNumber() {
+      const method = document.getElementById('paymentMethod').value;
+      document.getElementById('paymentNumberContainer').style.display = (method === "Online") ? "block" : "none";
     }
 
-    function generateEveningSummary() {
-      document.getElementById('eveningSummaryContainer').style.display = 'block';
-      document.getElementById('todaySale').textContent = localStorage.getItem('todayTotalSale') || 0;
+    function showEveningSummaryBtnIfEligible() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const show = (hours === 21 && minutes >= 30) || (hours > 21 || hours < 8);
+      document.getElementById('eveningSummaryBtn').style.display = show ? 'block' : 'none';
     }
 
-    function sendEveningSummary() {
-      const today = +(localStorage.getItem('todayTotalSale') || 0);
-      const previous = +document.getElementById('previousSale').value || 0;
-      const combined = today + previous;
-      document.getElementById('combinedSale').textContent = combined;
-
-      const lines = [
-        `📅 *Evening Sales Summary*`,
-        `🟢 *Today's Sale:* ₹${today}`,
-        `🔵 *Previous Sale:* ₹${previous}`,
-        `🧮 *Total Sale:* ₹${combined}`
-      ];
-
-      const msg = encodeURIComponent(lines.join('\n'));
-      window.open(`https://wa.me/?text=${msg}`, '_blank');
+    function openEveningSummary() {
+      alert("Evening Summary logic will go here.");
     }
 
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
-    const showStart = 21 * 60 + 30; // 9:30 PM
-    const showEnd = 8 * 60;         // 8:00 AM
-    if (currentMinutes >= showStart || currentMinutes < showEnd) {
-      document.getElementById('eveningSummaryBtn').style.display = 'inline-block';
-    }
+    window.onload = function () {
+      addItem();
+      updateEstimateDisplay();
+      showEveningSummaryBtnIfEligible();
+    };
   </script></body>
-  </html>
+                                                                                             </html>
