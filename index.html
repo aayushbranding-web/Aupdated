@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Billing System</title>
   <style>
     body {
@@ -16,18 +14,12 @@
       padding: 5px;
       margin-top: 5px;
     }
-    #eveningSummarySection {
+    #eveningSummaryBtn {
       display: none;
-      margin-top: 30px;
-      padding: 10px;
-      border-top: 2px dashed #ccc;
     }
   </style>
-</head>
-<body>
-  <h2>Billing System</h2>
-
-  <div class="field">
+</head><body>
+  <h2>Billing System</h2>  <div class="field">
     <label>Item:</label><br />
     <select id="item">
       <option value="">Select</option>
@@ -39,80 +31,49 @@
       <option>Joda Rakhi</option>
       <option>Puja Rakhi</option>
     </select>
-  </div>
-
-  <div class="field">
+  </div>  <div class="field">
     <label>Quantity:</label><br />
     <input type="number" id="quantity" />
-  </div>
-
-  <div class="field">
+  </div>  <div class="field">
     <label>Rate:</label><br />
     <input type="number" id="rate" />
-  </div>
-
-  <div class="field">
+  </div>  <div class="field">
     <label>Discount:</label><br />
-    <input type="number" id="discount" />
+    <input type="number" id="discount" placeholder="Enter discount" />
     <select id="discountType">
       <option value="₹">₹</option>
       <option value="%">%</option>
     </select>
-  </div>
-
-  <div class="field">
+  </div>  <div class="field">
     <label>Paid:</label><br />
     <input type="number" id="paid" />
-  </div>
-
-  <div class="field">
+  </div>  <div class="field">
     <label>Payment Mode:</label><br />
     <select id="paymentMode" onchange="togglePaymentNumber()">
       <option value="">Select</option>
       <option value="Cash">Cash</option>
       <option value="Online">Online</option>
     </select>
-  </div>
-
-  <div class="field" id="paymentNumberField" style="display: none;">
+  </div>  <div class="field" id="paymentNumberField" style="display: none;">
     <label>Payment Done On:</label><br />
     <select id="paymentNumber">
       <option value="">Select</option>
       <option value="7742065298">7742065298</option>
       <option value="6350455314">6350455314</option>
     </select>
-  </div>
-
-  <div class="field">
+  </div>  <div class="field">
     <label>Estimate No:</label>
     <span id="estimateNo"></span>
-  </div>
-
-  <div class="field">
+  </div>  <div class="field">
     <label>Total Before Discount:</label>
     <span id="totalBeforeDiscount">0</span>
-  </div>
-
-  <div class="field">
+  </div>  <div class="field">
     <label>Total After Discount:</label>
     <span id="total">0</span>
-  </div>
-
-  <div class="field">
+  </div>  <div class="field">
     <label>Balance:</label>
     <span id="balance">0</span>
-  </div>
-
-  <button onclick="generateBill()">Generate WhatsApp Message</button>
-  <button onclick="resetBill()">🔄 Reset</button>
-
-  <div id="eveningSummarySection">
-    <h3>🌆 Evening Summary</h3>
-    <p><strong>Total Sale Today:</strong> ₹<span id="todaySale">0</span></p>
-    <label>Previous Sale: ₹<input type="number" id="previousSale" /></label><br /><br />
-    <p><strong>Combined Total:</strong> ₹<span id="combinedTotal">0</span></p>
-    <button onclick="generateEveningSummary()">📤 Send Evening Summary</button>
-  </div>
+  </div><button onclick="generateBill()">Generate WhatsApp Message</button> <button onclick="resetBill()">🔄 Reset</button> <button id="eveningSummaryBtn" onclick="window.open('evening-summary.html', '_blank')">📊 Evening Summary</button>
 
   <script>
     function togglePaymentNumber() {
@@ -120,7 +81,7 @@
       document.getElementById('paymentNumberField').style.display = mode === 'Online' ? 'block' : 'none';
     }
 
-    let estimateNumber = localStorage.getItem('estimateNumber') || 1;
+    let estimateNumber = parseInt(localStorage.getItem('estimateNumber')) || 1;
     document.getElementById('estimateNo').textContent = estimateNumber;
 
     function generateBill() {
@@ -142,77 +103,15 @@
       }
 
       const balance = total - paid;
-
       document.getElementById('totalBeforeDiscount').textContent = totalBeforeDiscount;
       document.getElementById('total').textContent = total;
       document.getElementById('balance').textContent = balance;
 
-      const lines = [
-        `📌 *Estimate No:* ${estimateNumber}`,
-        `| *Item*        | *Qty* | *Rate* | *Total* |`,
-        `|---------------|-------|--------|---------|`,
-        `| ${item}        | ${quantity}    | ₹${rate}   | ₹${totalBeforeDiscount} |`,
-        `💸 *Discount:* ${discount}${discountType}`,
-        `💰 *Paid:* ₹${paid}`,
-        paymentMode === 'Online' ? `💳 *Mode:* ${paymentMode} (${paymentNumber})` : `💳 *Mode:* ${paymentMode}`
-      ];
+      // Save total in localStorage for evening summary
+      let currentTotal = parseFloat(localStorage.getItem('dailyTotal')) || 0;
+      currentTotal += total;
+      localStorage.setItem('dailyTotal', currentTotal);
 
-      const message = encodeURIComponent(lines.join('\n'));
-      const link = `https://wa.me/?text=${message}`;
-      window.open(link, '_blank');
-
-      estimateNumber++;
-      localStorage.setItem('estimateNumber', estimateNumber);
-      document.getElementById('estimateNo').textContent = estimateNumber;
-
-      // Update today's sale
-      let todaySale = parseFloat(localStorage.getItem('todaySale') || '0');
-      todaySale += total;
-      localStorage.setItem('todaySale', todaySale);
-      document.getElementById('todaySale').textContent = todaySale;
-    }
-
-    function resetBill() {
-      document.getElementById('item').value = "";
-      document.getElementById('quantity').value = "";
-      document.getElementById('rate').value = "";
-      document.getElementById('discount').value = "";
-      document.getElementById('discountType').value = "₹";
-      document.getElementById('paid').value = "";
-      document.getElementById('paymentMode').value = "";
-      document.getElementById('paymentNumber').value = "";
-      document.getElementById('paymentNumberField').style.display = 'none';
-      document.getElementById('total').textContent = 0;
-      document.getElementById('balance').textContent = 0;
-      document.getElementById('totalBeforeDiscount').textContent = 0;
-    }
-
-    function generateEveningSummary() {
-      const todaySale = parseFloat(localStorage.getItem('todaySale') || '0');
-      const previousSale = +document.getElementById('previousSale').value || 0;
-      const combined = todaySale + previousSale;
-
-      const message = encodeURIComponent(
-        `🌆 *Evening Sales Summary*\n\n📅 *Today's Sale:* ₹${todaySale}\n📂 *Previous Sale:* ₹${previousSale}\n🧾 *Combined Total:* ₹${combined}`
-      );
-      window.open(`https://wa.me/?text=${message}`, '_blank');
-    }
-
-    // Show Evening Summary after 9:30 PM
-    const now = new Date();
-    if (now.getHours() > 21 || (now.getHours() === 21 && now.getMinutes() >= 30)) {
-      document.getElementById('eveningSummarySection').style.display = 'block';
-      document.getElementById('todaySale').textContent = localStorage.getItem('todaySale') || '0';
-
-      document.getElementById('previousSale').addEventListener('input', function () {
-        const todaySale = parseFloat(localStorage.getItem('todaySale') || '0');
-        const previous = +this.value || 0;
-        document.getElementById('combinedTotal').textContent = todaySale + previous;
-      });
-    }
-  </script>
-</body>
-</html>
       const estimate = estimateNumber;
       const lines = [
         `📌 *Estimate No:* ${estimate}`,
@@ -253,123 +152,4 @@
     if (now.getHours() > 21 || (now.getHours() === 21 && now.getMinutes() >= 30)) {
       document.getElementById('eveningSummaryBtn').style.display = 'inline-block';
     }
-  </script></body></html>    }
-
-    function addItem() {
-      const container = document.getElementById('itemsContainer');
-      const div = document.createElement('div');
-      div.className = 'item';
-      div.innerHTML = `
-        <select class="itemName">
-          ${items.map(item => `<option value="${item}">${item}</option>`).join('')}
-        </select>
-        <input type="number" class="amount" placeholder="Amount" oninput="calculateTotals()">
-        <input type="number" class="quantity" placeholder="Qty" oninput="calculateTotals()">
-        <div class="btns">
-          <button onclick="addItem()">➕</button>
-          <button onclick="removeItem(this)">❌</button>
-        </div>
-      `;
-      container.appendChild(div);
-    }
-
-    function removeItem(btn) {
-      const item = btn.closest('.item');
-      if (item) {
-        item.remove();
-        calculateTotals();
-      }
-    }
-
-    function toggleNumberField() {
-      const mode = document.getElementById("paymentMode").value;
-      document.getElementById("paymentNumber").style.display = mode === "Online" ? "inline" : "none";
-    }
-
-    function calculateTotals() {
-      let total = 0;
-      document.querySelectorAll('.item').forEach(item => {
-        const amt = parseFloat(item.querySelector('.amount').value) || 0;
-        const qty = parseFloat(item.querySelector('.quantity').value) || 0;
-        total += amt * qty;
-      });
-      const discount = parseFloat(document.getElementById("discount").value) || 0;
-      const type = document.getElementById("discountType").value;
-      let finalTotal = type === "%" ? total - (total * discount / 100) : total - discount;
-      document.getElementById("grandTotal").textContent = `Grand Total: Rs. ${finalTotal.toFixed(2)}`;
-    }
-
-    function shareOnWhatsApp() {
-      const now = new Date();
-      const date = now.toLocaleDateString();
-      const time = now.toLocaleTimeString();
-
-      let message = `📄 *Estimate - Aayushi Fashions*\nEstimate No: ${currentEstimateNumber}\n📅 Date: ${date}\n🕒 Time: ${time}\n\n`;
-      message += "--------------------------------------\n";
-      message += "Item        Rate    Qty   Total\n";
-      message += "--------------------------------------\n";
-
-      let total = 0;
-      document.querySelectorAll('.item').forEach(item => {
-        const name = item.querySelector('.itemName').value;
-        const amt = parseFloat(item.querySelector('.amount').value) || 0;
-        const qty = parseFloat(item.querySelector('.quantity').value) || 0;
-        const lineTotal = amt * qty;
-        total += lineTotal;
-        message += `${name.padEnd(12)} Rs.${amt.toFixed(0).padEnd(6)} x${qty.toFixed(0).padEnd(4)} Rs.${lineTotal.toFixed(2)}\n`;
-      });
-
-      const discount = parseFloat(document.getElementById("discount").value) || 0;
-      const type = document.getElementById("discountType").value;
-      const paid = parseFloat(document.getElementById("paid").value) || 0;
-      const paymentMode = document.getElementById("paymentMode").value;
-      const paymentNumber = document.getElementById("paymentNumber").value;
-
-      const finalTotal = type === "%" ? total - (total * discount / 100) : total - discount;
-
-      message += "--------------------------------------\n";
-      message += `💰 *Total Before Discount:* Rs. ${total.toFixed(2)}\n`;
-      message += `🔻 *Discount:* ${discount} ${type}\n`;
-      message += `✅ *Final Total:* Rs. ${finalTotal.toFixed(2)}\n`;
-      message += `💵 *Paid:* Rs. ${paid.toFixed(2)}\n`;
-      message += `💳 *Mode:* ${paymentMode}`;
-      if (paymentMode === "Online") message += ` to ${paymentNumber}`;
-      message += `\n\n🙏 Thank you for choosing *Aayushi Fashions*!`;
-
-      const todayKey = `sales-${now.toISOString().slice(0,10)}`;
-      let currentSale = parseFloat(localStorage.getItem(todayKey) || 0);
-      currentSale += finalTotal;
-      localStorage.setItem(todayKey, currentSale);
-
-      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`);
-
-      resetBill(); // Reset and increase estimate number
-    }
-
-    function resetBill() {
-      currentEstimateNumber = getNextEstimateNumber();
-      updateEstimateDisplay();
-      document.getElementById("itemsContainer").innerHTML = "";
-      addItem();
-      document.getElementById("discount").value = "";
-      document.getElementById("paid").value = "";
-      document.getElementById("discountType").value = "rs";
-      document.getElementById("paymentMode").value = "Cash";
-      document.getElementById("paymentNumber").style.display = "none";
-      calculateTotals();
-    }
-
-    function checkTimeForSummary() {
-      const now = new Date();
-      if (now.getHours() >= 21 && now.getMinutes() >= 30) {
-        document.getElementById("eveningSummaryBtn").style.display = "block";
-      }
-    }
-
-    window.onload = function () {
-      updateEstimateDisplay();
-      addItem();
-      checkTimeForSummary();
-    };
-  </script></body>
-</html>
+  </script></body></html>
