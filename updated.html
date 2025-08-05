@@ -1,0 +1,228 @@
+<!-- index.html --><!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aayushi Fashions - Billing</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #fceabb, #f8b500);
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #6a1b9a;
+      font-size: 2rem;
+    }
+    #billContent {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: 20px auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .item {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    select, input[type="number"] {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    .btns button {
+      background-color: transparent;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .share-btn, .reset-btn, .summary-btn {
+      display: block;
+      margin: 20px auto;
+      background-color: #25D366;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 20px;
+      font-size: 16px;
+      text-align: center;
+    }
+    .reset-btn {
+      background-color: #d62828;
+    }
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 40px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Aayushi Fashions - Billing</h1>
+  <div id="billContent">
+    <div id="estimateNum"></div>
+    <div id="itemsContainer"></div>
+    <p id="grandTotal">Grand Total: Rs. 0.00</p>
+    <p>
+      Discount: <input type="number" id="discount" placeholder="0" oninput="calculateTotals()">
+      <select id="discountType" onchange="calculateTotals()">
+        <option value="rs">₹</option>
+        <option value="%">%</option>
+      </select>
+    </p>
+    <p>
+      Paid: <input type="number" id="paid" placeholder="0">
+      Payment Mode:
+      <select id="paymentMode" onchange="toggleNumberField()">
+        <option value="Cash">Cash</option>
+        <option value="Online">Online</option>
+      </select>
+      <select id="paymentNumber" style="display:none">
+        <option value="7742065298">7742065298</option>
+        <option value="6350455314">6350455314</option>
+      </select>
+    </p>
+  </div>
+  <button class="share-btn" onclick="shareOnWhatsApp()">📤 Share on WhatsApp</button>
+  <button class="reset-btn" onclick="resetBill()">🔄 Reset</button>
+  <a href="evening-summary.html" id="eveningSummaryBtn" class="summary-btn" style="display:none">📊 Evening Sale Summary</a>
+  <div class="footer">© 2025 Aayushi Fashions. All rights reserved.</div>  <script>
+    const items = ["Chuda Rakhi", "Baccha Rakhi", "Rakhi", "Moli", "Mehandi", "Joda Rakhi", "Puja Rakhi"];
+
+    function getNextEstimateNumber() {
+      let lastNum = parseInt(localStorage.getItem("lastEstimateNumber") || 0);
+      let nextNum = lastNum + 1;
+      localStorage.setItem("lastEstimateNumber", nextNum);
+      return `EST-${String(nextNum).padStart(3, '0')}`;
+    }
+
+    let currentEstimateNumber = getNextEstimateNumber();
+
+    function updateEstimateDisplay() {
+      document.getElementById("estimateNum").textContent = `Estimate No: ${currentEstimateNumber}`;
+    }
+
+    function addItem() {
+      const container = document.getElementById('itemsContainer');
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+        <select class="itemName">
+          ${items.map(item => `<option value="${item}">${item}</option>`).join('')}
+        </select>
+        <input type="number" class="amount" placeholder="Amount" oninput="calculateTotals()">
+        <input type="number" class="quantity" placeholder="Qty" oninput="calculateTotals()">
+        <div class="btns">
+          <button onclick="addItem()">➕</button>
+          <button onclick="removeItem(this)">❌</button>
+        </div>
+      `;
+      container.appendChild(div);
+    }
+
+    function removeItem(btn) {
+      const item = btn.closest('.item');
+      if (item) {
+        item.remove();
+        calculateTotals();
+      }
+    }
+
+    function toggleNumberField() {
+      const mode = document.getElementById("paymentMode").value;
+      document.getElementById("paymentNumber").style.display = mode === "Online" ? "inline" : "none";
+    }
+
+    function calculateTotals() {
+      let total = 0;
+      document.querySelectorAll('.item').forEach(item => {
+        const amt = parseFloat(item.querySelector('.amount').value) || 0;
+        const qty = parseFloat(item.querySelector('.quantity').value) || 0;
+        total += amt * qty;
+      });
+      const discount = parseFloat(document.getElementById("discount").value) || 0;
+      const type = document.getElementById("discountType").value;
+      let finalTotal = type === "%" ? total - (total * discount / 100) : total - discount;
+      document.getElementById("grandTotal").textContent = `Grand Total: Rs. ${finalTotal.toFixed(2)}`;
+    }
+
+    function shareOnWhatsApp() {
+      const now = new Date();
+      const date = now.toLocaleDateString();
+      const time = now.toLocaleTimeString();
+
+      let message = `📄 *Estimate - Aayushi Fashions*\nEstimate No: ${currentEstimateNumber}\n📅 Date: ${date}\n🕒 Time: ${time}\n\n`;
+      message += "--------------------------------------\n";
+      message += "Item        Rate    Qty   Total\n";
+      message += "--------------------------------------\n";
+
+      let total = 0;
+      document.querySelectorAll('.item').forEach(item => {
+        const name = item.querySelector('.itemName').value;
+        const amt = parseFloat(item.querySelector('.amount').value) || 0;
+        const qty = parseFloat(item.querySelector('.quantity').value) || 0;
+        const lineTotal = amt * qty;
+        total += lineTotal;
+        message += `${name.padEnd(12)} Rs.${amt.toFixed(0).padEnd(6)} x${qty.toFixed(0).padEnd(4)} Rs.${lineTotal.toFixed(2)}\n`;
+      });
+
+      const discount = parseFloat(document.getElementById("discount").value) || 0;
+      const type = document.getElementById("discountType").value;
+      const paid = parseFloat(document.getElementById("paid").value) || 0;
+      const paymentMode = document.getElementById("paymentMode").value;
+      const paymentNumber = document.getElementById("paymentNumber").value;
+
+      const finalTotal = type === "%" ? total - (total * discount / 100) : total - discount;
+
+      message += "--------------------------------------\n";
+      message += `💰 *Total Before Discount:* Rs. ${total.toFixed(2)}\n`;
+      message += `🔻 *Discount:* ${discount} ${type}\n`;
+      message += `✅ *Final Total:* Rs. ${finalTotal.toFixed(2)}\n`;
+      message += `💵 *Paid:* Rs. ${paid.toFixed(2)}\n`;
+      message += `💳 *Mode:* ${paymentMode}`;
+      if (paymentMode === "Online") message += ` to ${paymentNumber}`;
+      message += `\n\n🙏 Thank you for choosing *Aayushi Fashions*!`;
+
+      const todayKey = `sales-${now.toISOString().slice(0,10)}`;
+      let currentSale = parseFloat(localStorage.getItem(todayKey) || 0);
+      currentSale += finalTotal;
+      localStorage.setItem(todayKey, currentSale);
+
+      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`);
+
+      resetBill(); // Reset and increase estimate number
+    }
+
+    function resetBill() {
+      currentEstimateNumber = getNextEstimateNumber();
+      updateEstimateDisplay();
+      document.getElementById("itemsContainer").innerHTML = "";
+      addItem();
+      document.getElementById("discount").value = "";
+      document.getElementById("paid").value = "";
+      document.getElementById("discountType").value = "rs";
+      document.getElementById("paymentMode").value = "Cash";
+      document.getElementById("paymentNumber").style.display = "none";
+      calculateTotals();
+    }
+
+    function checkTimeForSummary() {
+      const now = new Date();
+      if (now.getHours() >= 21 && now.getMinutes() >= 30) {
+        document.getElementById("eveningSummaryBtn").style.display = "block";
+      }
+    }
+
+    window.onload = function () {
+      updateEstimateDisplay();
+      addItem();
+      checkTimeForSummary();
+    };
+  </script></body>
+</html>
