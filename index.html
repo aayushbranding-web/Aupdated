@@ -1,6 +1,8 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Billing System</title>
   <style>
     body {
@@ -14,12 +16,18 @@
       padding: 5px;
       margin-top: 5px;
     }
-    #eveningSummaryBtn {
+    #eveningSummarySection {
       display: none;
+      margin-top: 30px;
+      padding: 10px;
+      border-top: 2px dashed #ccc;
     }
   </style>
-</head><body>
-  <h2>Billing System</h2>  <div class="field">
+</head>
+<body>
+  <h2>Billing System</h2>
+
+  <div class="field">
     <label>Item:</label><br />
     <select id="item">
       <option value="">Select</option>
@@ -31,49 +39,80 @@
       <option>Joda Rakhi</option>
       <option>Puja Rakhi</option>
     </select>
-  </div>  <div class="field">
+  </div>
+
+  <div class="field">
     <label>Quantity:</label><br />
     <input type="number" id="quantity" />
-  </div>  <div class="field">
+  </div>
+
+  <div class="field">
     <label>Rate:</label><br />
     <input type="number" id="rate" />
-  </div>  <div class="field">
+  </div>
+
+  <div class="field">
     <label>Discount:</label><br />
-    <input type="number" id="discount" placeholder="Enter discount" />
+    <input type="number" id="discount" />
     <select id="discountType">
       <option value="₹">₹</option>
       <option value="%">%</option>
     </select>
-  </div>  <div class="field">
+  </div>
+
+  <div class="field">
     <label>Paid:</label><br />
     <input type="number" id="paid" />
-  </div>  <div class="field">
+  </div>
+
+  <div class="field">
     <label>Payment Mode:</label><br />
     <select id="paymentMode" onchange="togglePaymentNumber()">
       <option value="">Select</option>
       <option value="Cash">Cash</option>
       <option value="Online">Online</option>
     </select>
-  </div>  <div class="field" id="paymentNumberField" style="display: none;">
+  </div>
+
+  <div class="field" id="paymentNumberField" style="display: none;">
     <label>Payment Done On:</label><br />
     <select id="paymentNumber">
       <option value="">Select</option>
       <option value="7742065298">7742065298</option>
       <option value="6350455314">6350455314</option>
     </select>
-  </div>  <div class="field">
+  </div>
+
+  <div class="field">
     <label>Estimate No:</label>
     <span id="estimateNo"></span>
-  </div>  <div class="field">
+  </div>
+
+  <div class="field">
     <label>Total Before Discount:</label>
     <span id="totalBeforeDiscount">0</span>
-  </div>  <div class="field">
+  </div>
+
+  <div class="field">
     <label>Total After Discount:</label>
     <span id="total">0</span>
-  </div>  <div class="field">
+  </div>
+
+  <div class="field">
     <label>Balance:</label>
     <span id="balance">0</span>
-  </div><button onclick="generateBill()">Generate WhatsApp Message</button> <button onclick="resetBill()">🔄 Reset</button> <button id="eveningSummaryBtn" onclick="window.open('evening-summary.html', '_blank')">📊 Evening Summary</button>
+  </div>
+
+  <button onclick="generateBill()">Generate WhatsApp Message</button>
+  <button onclick="resetBill()">🔄 Reset</button>
+
+  <div id="eveningSummarySection">
+    <h3>🌆 Evening Summary</h3>
+    <p><strong>Total Sale Today:</strong> ₹<span id="todaySale">0</span></p>
+    <label>Previous Sale: ₹<input type="number" id="previousSale" /></label><br /><br />
+    <p><strong>Combined Total:</strong> ₹<span id="combinedTotal">0</span></p>
+    <button onclick="generateEveningSummary()">📤 Send Evening Summary</button>
+  </div>
 
   <script>
     function togglePaymentNumber() {
@@ -103,10 +142,77 @@
       }
 
       const balance = total - paid;
+
       document.getElementById('totalBeforeDiscount').textContent = totalBeforeDiscount;
       document.getElementById('total').textContent = total;
       document.getElementById('balance').textContent = balance;
 
+      const lines = [
+        `📌 *Estimate No:* ${estimateNumber}`,
+        `| *Item*        | *Qty* | *Rate* | *Total* |`,
+        `|---------------|-------|--------|---------|`,
+        `| ${item}        | ${quantity}    | ₹${rate}   | ₹${totalBeforeDiscount} |`,
+        `💸 *Discount:* ${discount}${discountType}`,
+        `💰 *Paid:* ₹${paid}`,
+        paymentMode === 'Online' ? `💳 *Mode:* ${paymentMode} (${paymentNumber})` : `💳 *Mode:* ${paymentMode}`
+      ];
+
+      const message = encodeURIComponent(lines.join('\n'));
+      const link = `https://wa.me/?text=${message}`;
+      window.open(link, '_blank');
+
+      estimateNumber++;
+      localStorage.setItem('estimateNumber', estimateNumber);
+      document.getElementById('estimateNo').textContent = estimateNumber;
+
+      // Update today's sale
+      let todaySale = parseFloat(localStorage.getItem('todaySale') || '0');
+      todaySale += total;
+      localStorage.setItem('todaySale', todaySale);
+      document.getElementById('todaySale').textContent = todaySale;
+    }
+
+    function resetBill() {
+      document.getElementById('item').value = "";
+      document.getElementById('quantity').value = "";
+      document.getElementById('rate').value = "";
+      document.getElementById('discount').value = "";
+      document.getElementById('discountType').value = "₹";
+      document.getElementById('paid').value = "";
+      document.getElementById('paymentMode').value = "";
+      document.getElementById('paymentNumber').value = "";
+      document.getElementById('paymentNumberField').style.display = 'none';
+      document.getElementById('total').textContent = 0;
+      document.getElementById('balance').textContent = 0;
+      document.getElementById('totalBeforeDiscount').textContent = 0;
+    }
+
+    function generateEveningSummary() {
+      const todaySale = parseFloat(localStorage.getItem('todaySale') || '0');
+      const previousSale = +document.getElementById('previousSale').value || 0;
+      const combined = todaySale + previousSale;
+
+      const message = encodeURIComponent(
+        `🌆 *Evening Sales Summary*\n\n📅 *Today's Sale:* ₹${todaySale}\n📂 *Previous Sale:* ₹${previousSale}\n🧾 *Combined Total:* ₹${combined}`
+      );
+      window.open(`https://wa.me/?text=${message}`, '_blank');
+    }
+
+    // Show Evening Summary after 9:30 PM
+    const now = new Date();
+    if (now.getHours() > 21 || (now.getHours() === 21 && now.getMinutes() >= 30)) {
+      document.getElementById('eveningSummarySection').style.display = 'block';
+      document.getElementById('todaySale').textContent = localStorage.getItem('todaySale') || '0';
+
+      document.getElementById('previousSale').addEventListener('input', function () {
+        const todaySale = parseFloat(localStorage.getItem('todaySale') || '0');
+        const previous = +this.value || 0;
+        document.getElementById('combinedTotal').textContent = todaySale + previous;
+      });
+    }
+  </script>
+</body>
+</html>
       const estimate = estimateNumber;
       const lines = [
         `📌 *Estimate No:* ${estimate}`,
