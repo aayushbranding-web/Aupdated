@@ -4,143 +4,114 @@
   <title>Billing System</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #f0f4f7, #d9e2ec);
-      color: #333;
-      padding: 30px;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f8f9fa, #e9ecef);
+      padding: 40px;
+      color: #343a40;
     }
     h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #2c3e50;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #fff;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      color: #212529;
+      margin-bottom: 20px;
     }
     .field {
       margin-bottom: 15px;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 5px;
+      transition: all 0.3s ease;
     }
     input, select, button {
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ced4da;
       width: 100%;
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 14px;
+      box-sizing: border-box;
+      font-size: 16px;
     }
     button {
-      background-color: #3498db;
+      background-color: #007bff;
       color: white;
-      border: none;
       cursor: pointer;
       margin-top: 10px;
-      transition: background-color 0.3s ease;
     }
     button:hover {
-      background-color: #2980b9;
+      background-color: #0056b3;
     }
     #eveningSummaryBtn {
-      background-color: #27ae60;
-      margin-top: 20px;
+      display: none;
+      background-color: #28a745;
     }
-    #eveningSummaryBtn:hover {
-      background-color: #1e8449;
-    }
-    span {
-      font-weight: 600;
+    .summary {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
   </style>
 </head><body>
-  <div class="container">
-    <h2>Billing System</h2><div class="field">
-  <label>Item:</label>
-  <select id="item">
-    <option value="">Select</option>
-    <option>Chuda Rakhi</option>
-    <option>Baccha Rakhi</option>
-    <option>Rakhi</option>
-    <option>Moli</option>
-    <option>Mehandi</option>
-    <option>Joda Rakhi</option>
-    <option>Puja Rakhi</option>
-  </select>
-</div>
+  <h2>Billing System</h2>  <div class="field">
+    <label>Item:</label><br />
+    <select id="item">
+      <option value="">Select</option>
+      <option>Chuda Rakhi</option>
+      <option>Baccha Rakhi</option>
+      <option>Rakhi</option>
+      <option>Moli</option>
+      <option>Mehandi</option>
+      <option>Joda Rakhi</option>
+      <option>Puja Rakhi</option>
+    </select>
+  </div>  <div class="field">
+    <label>Quantity:</label><br />
+    <input type="number" id="quantity" />
+  </div>  <div class="field">
+    <label>Rate:</label><br />
+    <input type="number" id="rate" />
+  </div>  <div class="field">
+    <label>Discount:</label><br />
+    <input type="number" id="discount" placeholder="Enter discount" />
+    <select id="discountType">
+      <option value="₹">₹</option>
+      <option value="%">%</option>
+    </select>
+  </div>  <div class="field">
+    <label>Paid:</label><br />
+    <input type="number" id="paid" />
+  </div>  <div class="field">
+    <label>Payment Mode:</label><br />
+    <select id="paymentMode" onchange="togglePaymentNumber()">
+      <option value="">Select</option>
+      <option value="Cash">Cash</option>
+      <option value="Online">Online</option>
+    </select>
+  </div>  <div class="field" id="paymentNumberField" style="display: none;">
+    <label>Payment Done On:</label><br />
+    <select id="paymentNumber">
+      <option value="">Select</option>
+      <option value="7742065298">7742065298</option>
+      <option value="6350455314">6350455314</option>
+    </select>
+  </div>  <div class="field">
+    <label>Estimate No:</label>
+    <span id="estimateNo"></span>
+  </div>  <div class="field">
+    <label>Total Before Discount:</label>
+    <span id="totalBeforeDiscount">0</span>
+  </div>  <div class="field">
+    <label>Total After Discount:</label>
+    <span id="total">0</span>
+  </div>  <div class="field">
+    <label>Balance:</label>
+    <span id="balance">0</span>
+  </div><button onclick="generateBill()">Generate WhatsApp Message</button> <button onclick="resetBill()">🔄 Reset</button> <button id="eveningSummaryBtn" onclick="generateEveningSummary()">📊 Evening Summary</button>
 
-<div class="field">
-  <label>Quantity:</label>
-  <input type="number" id="quantity" />
-</div>
-
-<div class="field">
-  <label>Rate:</label>
-  <input type="number" id="rate" />
-</div>
-
-<div class="field">
-  <label>Discount:</label>
-  <input type="number" id="discount" placeholder="Enter discount" />
-  <select id="discountType">
-    <option value="₹">₹</option>
-    <option value="%">%</option>
-  </select>
-</div>
-
-<div class="field">
-  <label>Paid:</label>
-  <input type="number" id="paid" />
-</div>
-
-<div class="field">
-  <label>Payment Mode:</label>
-  <select id="paymentMode" onchange="togglePaymentNumber()">
-    <option value="">Select</option>
-    <option value="Cash">Cash</option>
-    <option value="Online">Online</option>
-  </select>
-</div>
-
-<div class="field" id="paymentNumberField" style="display: none;">
-  <label>Payment Done On:</label>
-  <select id="paymentNumber">
-    <option value="">Select</option>
-    <option value="7742065298">7742065298</option>
-    <option value="6350455314">6350455314</option>
-  </select>
-</div>
-
-<div class="field">
-  <label>Estimate No:</label>
-  <span id="estimateNo"></span>
-</div>
-
-<div class="field">
-  <label>Total Before Discount:</label>
-  <span id="totalBeforeDiscount">0</span>
-</div>
-
-<div class="field">
-  <label>Total After Discount:</label>
-  <span id="total">0</span>
-</div>
-
-<div class="field">
-  <label>Balance:</label>
-  <span id="balance">0</span>
-</div>
-
-<button onclick="generateBill()">Generate WhatsApp Message</button>
-<button onclick="resetBill()">🔄 Reset</button>
-<button id="eveningSummaryBtn" onclick="window.open('evening-summary.html', '_blank')">📊 Evening Summary</button>
-
+  <div class="summary" id="eveningSummaryContainer" style="display:none">
+    <label>Today's Sale:</label>
+    <span id="todaySale">0</span><br /><br />
+    <label>Previous Sale:</label>
+    <input type="number" id="previousSale" /><br /><br />
+    <label>Total Sale:</label>
+    <span id="combinedSale">0</span><br /><br />
+    <button onclick="sendEveningSummary()">Send Summary to WhatsApp</button>
   </div>  <script>
     function togglePaymentNumber() {
       const mode = document.getElementById('paymentMode').value;
@@ -149,6 +120,8 @@
 
     let estimateNumber = localStorage.getItem('estimateNumber') || 1;
     document.getElementById('estimateNo').textContent = estimateNumber;
+
+    let todayTotalSale = 0;
 
     function generateBill() {
       const item = document.getElementById('item').value;
@@ -173,6 +146,9 @@
       document.getElementById('total').textContent = total;
       document.getElementById('balance').textContent = balance;
 
+      todayTotalSale += total;
+      localStorage.setItem('todayTotalSale', todayTotalSale);
+
       const estimate = estimateNumber;
       const lines = [
         `📌 *Estimate No:* ${estimate}`,
@@ -191,11 +167,6 @@
       estimateNumber++;
       localStorage.setItem('estimateNumber', estimateNumber);
       document.getElementById('estimateNo').textContent = estimateNumber;
-
-      // Store daily sale total
-      let todayTotal = parseFloat(localStorage.getItem('todayTotal') || '0');
-      todayTotal += total;
-      localStorage.setItem('todayTotal', todayTotal);
     }
 
     function resetBill() {
@@ -213,9 +184,34 @@
       document.getElementById('totalBeforeDiscount').textContent = 0;
     }
 
-    // Show button after 9:30 PM
+    function generateEveningSummary() {
+      document.getElementById('eveningSummaryContainer').style.display = 'block';
+      document.getElementById('todaySale').textContent = localStorage.getItem('todayTotalSale') || 0;
+    }
+
+    function sendEveningSummary() {
+      const today = +(localStorage.getItem('todayTotalSale') || 0);
+      const previous = +document.getElementById('previousSale').value || 0;
+      const combined = today + previous;
+      document.getElementById('combinedSale').textContent = combined;
+
+      const lines = [
+        `📅 *Evening Sales Summary*`,
+        `🟢 *Today's Sale:* ₹${today}`,
+        `🔵 *Previous Sale:* ₹${previous}`,
+        `🧮 *Total Sale:* ₹${combined}`
+      ];
+
+      const msg = encodeURIComponent(lines.join('\n'));
+      window.open(`https://wa.me/?text=${msg}`, '_blank');
+    }
+
     const now = new Date();
-    if (now.getHours() > 21 || (now.getHours() === 21 && now.getMinutes() >= 30)) {
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const showStart = 21 * 60 + 30; // 9:30 PM
+    const showEnd = 8 * 60;         // 8:00 AM
+    if (currentMinutes >= showStart || currentMinutes < showEnd) {
       document.getElementById('eveningSummaryBtn').style.display = 'inline-block';
     }
-  </script></body></html>
+  </script></body>
+  </html>
